@@ -26,6 +26,9 @@ if sys.platform.startswith('darwin'):
     with open('build/mac/resources/Info.plist', 'w') as f:
         f.write(content)
 
+data_to_copy = [
+    (os.path.join(root_dir, "build", "win", "resources"), 'tribler_source/resources')
+]
 excluded_libs = []
 
 # Hidden imports
