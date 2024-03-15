@@ -4,13 +4,14 @@ import os
 import pkgutil
 import sys
 
+from PyInstaller import __version__ as pyinstaller_version
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 root_dir = os.path.abspath(os.path.dirname(__name__))
 src_dir = os.path.join(root_dir, "src")
 sys.path.append(src_dir)
 
-version_str='10.0.0'
+version_str=pyinstaller_version
 
 # On macOS, we always show the console to prevent the double-dock bug (although the OS does not actually show the console).
 show_console = os.environ.get('SHOW_CONSOLE', 'false') == 'true'
@@ -26,15 +27,10 @@ if sys.platform.startswith('darwin'):
     with open('build/mac/resources/Info.plist', 'w') as f:
         f.write(content)
 
-data_to_copy = [
-    (os.path.join(root_dir, "build", "win", "resources"), 'tribler_source/resources')
-]
+data_to_copy = []
 excluded_libs = []
-
-# Hidden imports
-hiddenimports = [
-    'dataclasses',  # https://github.com/pyinstaller/pyinstaller/issues/5432
-]
+hiddenimports = []
+app_name = f'HelloPyInstaller-{version_str}'
 
 a = Analysis(['src/main.py'],
              pathex=[''],
@@ -54,7 +50,7 @@ pyz = PYZ(a.pure, a.zipped_data,
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='tribler',
+          name=app_name,
           debug=False,
           strip=False,
           upx=True,
@@ -67,12 +63,12 @@ coll = COLLECT(exe,
                a.datas,
                strip=False,
                upx=True,
-               name='tribler')
+               name=app_name)
 
 app = BUNDLE(coll,
              name='Tribler.app',
              icon='build/mac/resources/tribler.icns',
-             bundle_identifier='nl.tudelft.tribler',
+             bundle_identifier='com.github.pyscanner.pyinstaller',
              info_plist={'CFBundleName': 'Tribler', 'CFBundleDisplayName': 'Tribler', 'NSHighResolutionCapable': 'True',
                          'CFBundleInfoDictionaryVersion': 1.0, 'CFBundleVersion': version_str,
                          'CFBundleShortVersionString': version_str},
