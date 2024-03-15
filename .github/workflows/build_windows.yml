@@ -85,7 +85,7 @@ jobs:
             python -m pip install --upgrade pip
             pip install pyinstaller==${{ github.event.inputs.pyinstaller-version || inputs.pyinstaller-version }}
             dir
-            pyinstaller main.py --onefile --name pyscanner --distpath dist
+            pyinstaller src/main.py --onefile --name pyscanner --distpath dist
 
       - name: Upload Artifact
         if: github.event.inputs.upload || inputs.upload
